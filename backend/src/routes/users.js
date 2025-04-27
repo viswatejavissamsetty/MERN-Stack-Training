@@ -1,5 +1,5 @@
 const express = require("express");
-const userModel = require("../models/user.js");
+const userService = require("../services/users.js");
 
 const router = express.Router();
 
@@ -7,19 +7,23 @@ const router = express.Router();
 router.post("/register", async function (req, res) {
   const body = req.body;
 
-  const isExistingUser = await userModel.findOne({ username: body.username });
+  try {
+    const createdUser = await userService.register(
+      body.username,
+      body.password,
+      body.email,
+      body.fullname
+    );
 
-  if (isExistingUser) {
-    res.status(400).json({
-      message: "Username is already taken",
+    res.json({
+      status: true,
+      username: createdUser.username,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message,
     });
   }
-
-  const createdUser = await userModel.insertOne(body);
-  res.json({
-    status: true,
-    username: createdUser.username,
-  });
 });
 
 router.post("/login", async function (req, res) {
@@ -27,41 +31,51 @@ router.post("/login", async function (req, res) {
   const username = body.username;
   const password = body.password;
 
-  const user = await userModel.findOne({ username: username });
+  try {
+    const user = await userService.login(username, password);
 
-  if (!user) {
-    res.status(401).json({
-      message: "Invalid username or password",
+    res.json({
+      status: "SUCCESS",
+      userid: user._id,
     });
-  } else {
-    if (user.password != password) {
-      res.status(401).json({
-        message: "Invalid username or password",
-      });
-    } else {
-      res.status(200).json({
-        status: "SUCCESS",
-        userid: user._id,
-      });
-    }
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
   }
 });
 
 router.patch("/:userId", async function (req, res) {
   const body = req.body;
-  const email = req.body.email;
+  const email = body.email;
 
-  const userId = req.params.userId;
+  try {
+    const updatedResult = await userService.updateUserDetails(
+      req.params.userId,
+      email
+    );
 
-  const updatedResult = await userModel.updateOne(
-    { _id: userId },
-    { email: email }
-  );
+    res.json({
+      status: "SUCCESS",
+      updatedResult: updatedResult,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
+  }
+});
 
-  res.json({
-    status: "SUCCESS",
-    updatedResult: updatedResult,
-  });
+router.get("/:userId", async function (req, res) {
+  try {
+    const user = await userService.getUserDetails(req.params.userId);
+
+    res.json(user);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
+  }
 });
 
 module.exports = router;

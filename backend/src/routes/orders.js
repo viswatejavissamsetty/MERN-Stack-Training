@@ -1,5 +1,5 @@
 const express = require("express");
-const orderModel = require("../models/orders.js");
+const orderService = require("../services/orders.js");
 
 const router = express.Router();
 
@@ -7,52 +7,42 @@ router.post("/", async (req, res) => {
   const body = req.body;
   const userId = req.headers["authorization"];
 
-  const createdOrder = await orderModel.create({
-    productId: body.productId,
-    quantity: body.quantity,
-    address: body.address,
-    userId: userId,
-  });
-
-  res.json({
-    status: "SUCCESS",
-    createdOrder: createdOrder,
-  });
+  try {
+    const user = await orderService.createOrder(userId, body);
+    res.json(user);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
+  }
 });
 
 router.get("/", async (req, res) => {
   const userId = req.headers["authorization"];
 
-  if (!userId) {
-    res.status(401).json({ message: "Invalid user Id" });
-  } else {
-    const orders = await orderModel
-      .find(
-        {
-          userId: userId,
-        },
-        { __v: 0 }
-      )
-      .populate("userId", "-password -_id -__v")
-      .populate("productId", "-_id -quantity");
+  try {
+    const orders = await orderService.getOrders(userId);
+
     res.json(orders);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
   }
 });
 
 router.patch("/:orderId", async (req, res) => {
   const orderId = req.params.orderId;
 
-  const updatedResult = await orderModel.updateOne(
-    {
-      _id: orderId,
-    },
-    {
-      quantity: req.body.quantity,
-      address: req.body.address,
-    }
-  );
+  try {
+    const updatedOrder = await orderService.updateOrder(orderId, req.body);
 
-  res.json({ status: "SUCCESS", updatedResult });
+    res.json(updatedOrder);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
+  }
 });
 
 module.exports = router;
