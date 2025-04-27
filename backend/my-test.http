@@ -1,0 +1,91 @@
+# Test API
+GET  http://localhost:3000/
+
+
+# Product Flow
+
+### Create Product 
+POST http://localhost:3000/products
+Content-Type: application/json
+
+{
+    "name": "Smart Watch 1",
+    "description": "This is a best smart watch",
+    "price": 4000,
+    "quantity": 100
+}
+
+### Get App Products
+GET http://localhost:3000/products
+
+### Update Product
+PATCH http://localhost:3000/products/680dc6dfd4741339a2ef8391
+Content-Type: application/json
+
+{
+    "name": "Smart Watch",
+    "description": "This is a best smart watch",
+    "price": 4000,
+    "isAvailable": true,
+    "quantity": 100
+}
+
+
+### Delete Product
+DELETE http://localhost:3000/products/680dcac6808fd523d1863575
+
+
+# Users
+### Create/register User
+POST http://localhost:3000/user/register
+Content-Type: application/json
+
+{
+    "fullname": "ahalya",
+    "username": "ahalya",
+    "email": "ahalya@gmail.com",
+    "password": "Test@123"
+}
+
+### Login
+POST http://localhost:3000/user/login
+Content-Type: application/json
+
+{
+    "username": "ahalya",
+    "password": "Test@123"
+}
+
+### Change User EMail
+PATCH http://localhost:3000/user/680dd3de138751b7ec89e0a1
+Content-Type: application/json
+
+{
+    "email": "viswateja994@gmail.com"
+}
+
+
+# Orders
+### Create order
+POST http://localhost:3000/orders
+Content-Type: application/json
+Authorization: 680dd90210ef0998a55bedc2
+
+{
+    "productId": "680dca8d04d49ec23e80de2b",
+    "quantity": 2,
+    "address": "Near infosys"
+}
+
+### Get all orders
+GET http://localhost:3000/orders
+Authorization: 680dd90210ef0998a55bedc2
+
+### Update orders
+PATCH http://localhost:3000/orders/680dd91b10ef0998a55bedc6
+Content-Type: application/json
+
+{
+    "quantity": 6,
+    "address": "Near infosys"
+}
