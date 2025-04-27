@@ -1,5 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
+
 const usersRouter = require("./routes/users.js");
 const ordersRouter = require("./routes/orders.js");
 const productRouter = require("./routes/products.js");
@@ -9,6 +11,8 @@ mongoose.connect("mongodb://localhost:27017/big-basket").then(() => {
 });
 
 const app = express();
+
+app.use(cors());
 
 // Code to make all the data is in json format
 app.use(express.json());
