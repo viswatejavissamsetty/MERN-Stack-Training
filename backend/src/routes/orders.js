@@ -45,4 +45,18 @@ router.patch("/:orderId", async (req, res) => {
   }
 });
 
+router.delete("/:orderId", async (req, res) => {
+  const orderId = req.params.orderId;
+
+  try {
+    const deletedOrder = await orderService.deleteOrder(orderId);
+
+    res.json(deletedOrder);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message,
+    });
+  }
+});
+
 module.exports = router;

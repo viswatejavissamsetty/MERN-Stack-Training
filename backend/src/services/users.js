@@ -1,4 +1,5 @@
 const userModel = require("../models/user.js");
+const MyError = require("../utils/error.js");
 
 async function register(username, password, email, fullname) {
   const isExistingUser = await userModel.findOne({ username: username });
@@ -22,26 +23,17 @@ async function register(username, password, email, fullname) {
 
 async function login(username, password) {
   if (!username || !password) {
-    throw new Error({
-      statusCode: 400,
-      message: "Username and password are required",
-    });
+    throw new MyError(400, "Username and password are required");
   }
 
   const user = await userModel.findOne({ username: username });
 
   if (!user) {
-    throw new Error({
-      statusCode: 400,
-      message: "User not found",
-    });
+    throw new MyError(400, "Invalid username or password");
   }
 
   if (user.password !== password) {
-    throw new Error({
-      statusCode: 400,
-      message: "Invalid password",
-    });
+    throw new MyError(400, "Invalid username or password");
   }
 
   return user;

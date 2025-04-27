@@ -38,8 +38,15 @@ async function updateOrder(orderId, orderDetails) {
   return updatedOrder;
 }
 
+async function deleteOrder(orderId) {
+  const deletedOrder = await orderModel.deleteOne({ _id: orderId });
+
+  return deletedOrder;
+}
+
 module.exports = {
   createOrder,
   getOrders,
   updateOrder,
+  deleteOrder,
 };

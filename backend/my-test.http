@@ -52,8 +52,8 @@ POST http://localhost:3000/user/login
 Content-Type: application/json
 
 {
-    "username": "ahalya",
-    "password": "Test@123"
+    "username": "fadsf",
+    "password": "fdsfa"
 }
 
 ### Change User EMail
